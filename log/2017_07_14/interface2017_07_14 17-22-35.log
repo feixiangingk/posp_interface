@@ -1,0 +1,3 @@
+INFO| 2017-07-14 17:22:35,780 |Initialization has complate!
+INFO| 2017-07-14 17:22:36,578 |Run case:CaseTest.test_interface07|data drivern
+INFO| 2017-07-14 17:22:36,578 |Run case:CaseTest.test_interface07|data drivern error: '405' != '601'
