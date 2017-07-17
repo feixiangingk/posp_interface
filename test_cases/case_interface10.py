@@ -69,7 +69,16 @@ class CaseInterface10(InterFaceCase):
             raise e
 
 
-    @data(get_excel_info()[2])
+    @data(get_excel_info()[1], get_excel_info()[2], get_excel_info()[3], get_excel_info()[4],
+          get_excel_info()[5], get_excel_info()[6], get_excel_info()[7], get_excel_info()[8],
+          get_excel_info()[9], get_excel_info()[10], get_excel_info()[11], get_excel_info()[12],
+          get_excel_info()[13], get_excel_info()[14], get_excel_info()[15], get_excel_info()[16],
+          get_excel_info()[17], get_excel_info()[18], get_excel_info()[19], get_excel_info()[20],
+          get_excel_info()[21], get_excel_info()[22], get_excel_info()[23], get_excel_info()[24],
+          get_excel_info()[25], get_excel_info()[26], get_excel_info()[27], get_excel_info()[28],
+          get_excel_info()[29], get_excel_info()[30], get_excel_info()[31], get_excel_info()[32],
+          get_excel_info()[33], get_excel_info()[34], get_excel_info()[35], get_excel_info()[36],
+          get_excel_info()[37], get_excel_info()[38], get_excel_info()[39], get_excel_info()[40])
     def test_interface10(self,excel_info):
         case_index=excel_info['case_index']
 

@@ -1,6 +1,8 @@
 #coding:utf-8
 import xlrd,sys
 sys.path.append('..')
+reload(sys)
+sys.setdefaultencoding('utf-8')
 from common.interface_init import *
 from openpyxl import  load_workbook
 from datetime import datetime
@@ -35,8 +37,9 @@ class ExecExcel():
             excel_info[int(rows_info[0])]={}
 
             for n in xrange(len(interfaceIndex)):
-                if interfaceIndex[n] in ['tradeAmount','currentSucceedAmount','succeedAmount']:
+                if interfaceIndex[n] in ['tradeAmount', 'currentSucceedAmount', 'succeedAmount','amount','totalAmount','notifyUrl']:
                     excel_info[rows_info[0]][interfaceIndex[n]] = str(rows_info[n + 1])
+
                 else:
                     excel_info[rows_info[0]][interfaceIndex[n]]=str(rows_info[n+1]).split('.')[0]
 
@@ -60,7 +63,10 @@ class ExecExcel():
                      "float":lambda x:float(x),
                      "True":lambda x:bool(1),
                      "False":lambda x:bool(0),
-                     "list":lambda x:[x]}
+                     "list":lambda x:[x],
+                     #将字符串转换为json格式
+                     "json":lambda x:eval(str(x).replace("\n","").replace("\t",""))}
+
 
 
         for i in xrange(table.nrows):
@@ -72,7 +78,7 @@ class ExecExcel():
 
             dict_info={'case_index':i-3}
             for n in xrange(len(interfaceIndex)):
-                if interfaceIndex[n] in ['tradeAmount', 'currentSucceedAmount', 'succeedAmount']:
+                if interfaceIndex[n] in ['tradeAmount', 'currentSucceedAmount', 'succeedAmount','amount','totalAmount','notifyUrl']:
                     dict_info[interfaceIndex[n]] = str(rows_info[n + 1])
                 else:
                     dict_info[interfaceIndex[n]] = str(rows_info[n + 1]).split('.')[0]
@@ -82,9 +88,12 @@ class ExecExcel():
                     #用dict.get()方法防止keyerror;用strip()去掉空格
                     try:
                         dict_info[interfaceIndex[n]]=format_data.get(dict_info[interfaceIndex[n]].split('@')[1].strip())(dict_info[interfaceIndex[n]].split('@')[0])
-                    except TypeError,e:
-                        print "i is {one};n is {two}".format(one=(i+3),two=n)
-                        interface_init.initial.logger.info("i is {one};n is {two}".format(one=(i+3),two=n))
+
+                    #捕获多个异常的写法
+                    except (TypeError,ValueError),e:
+                        print "i is {one};n is {two}".format(one=(i-3),two=n+2)
+                        interface_init.initial.logger.info("i is {one};n is {two}".format(one=(i-3),two=n+2))
+                        raise e
 
             excel_info.append(dict_info)
 
@@ -113,6 +122,6 @@ class ExecExcel():
 if __name__=="__main__":
     Init()
     execExcel=ExecExcel()
-    list_excel_info=execExcel.get_info_ddt('interface07')
-    print list_excel_info[2]
+    list_excel_info=execExcel.get_info_ddt('interface11')
+    print list_excel_info[1]
     # execExcel.write_info('interface06',[(1,'success','OK')])
