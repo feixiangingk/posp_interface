@@ -61,7 +61,7 @@ class CaseInterface09(InterFaceCase):
         #写日志，并且根据response值做断言
         self.logger.info('Run case:CaseTest.test_1')
         try:
-            self.assertEqual(str(response.status_code),assert_code)
+            self.assertEqual(str(response.json().get('code')),assert_code)
             interface_init.initial.result.append((case_index,'success','OK'))
         #将错误异常捕获并抛出
         except AssertionError as e:
@@ -69,8 +69,12 @@ class CaseInterface09(InterFaceCase):
             raise e
 
 
-    @data(get_excel_info()[1])
+    @data(*get_excel_info())
     def test_interface09(self,excel_info):
+        if excel_info =='placeholder':
+            self.logger.info("CaseTest.test_interface08|data drivern:skip this placeholder case!")
+            return True
+
         case_index=excel_info['case_index']
 
         #接口用例为N则不执行直接成功
@@ -92,7 +96,7 @@ class CaseInterface09(InterFaceCase):
         #写日志，并且根据response值做断言
         self.logger.info('Run case:CaseTest.test_interface09|data drivern')
         try:
-            self.assertEqual(str(response.status_code),assert_code)
+            self.assertEqual(str(response.json().get('code')),assert_code)
             interface_init.initial.result.append((case_index,'success','OK'))
         #将错误异常捕获并抛出
         except AssertionError as e:

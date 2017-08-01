@@ -12,7 +12,6 @@ initial=None
 class Initialization():
 
     def __init__(self):
-        self.__doc__='initialization operation class'
         self.interfaceConfig = InterfaceConfig()
 
         self.project_path=self.interfaceConfig.project_path
@@ -22,17 +21,22 @@ class Initialization():
 
         self.testcase = self.interfaceConfig.testcase
 
+
         self.logger=interfaceLog.logger
         self.logger.info("Initialization has complate!")
+
+
+
 
 class Init():
     def __init__(self):
         interface_init.initial=Initialization()
 
+
+
 if __name__=="__main__":
     init=Init()
-    # print interface_init.initial.interfaceConfig.successful_notice_of_single_recharge
-    print getattr(interface_init.initial.interfaceConfig,'successful_notice_of_single_recharge')
+    print interface_init.initial.interfaceConfig.successful_notice_of_single_recharge
 
 
 

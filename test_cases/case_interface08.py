@@ -6,31 +6,37 @@ sys.path.append("..")
 from common.interface_case import InterFaceCase
 from common.interface_init import *
 from common.get_request_info import GetRequestInfo
-from common.read_excel import ExecExcel
 from ddt import ddt,data,unpack
+from common.excel_info import ExcelInfo
 
-def get_excel_info():
-    if isinstance(interface_init.initial,Initialization)!=True:
-        Init()
-    execExcel = ExecExcel()
-    list_excel_info= execExcel.get_info_ddt('interface08')
-    return  list_excel_info
+
+
 
 
 @ddt
 class CaseInterface08(InterFaceCase):
 
+
+
+
     @classmethod
     def setUpClass(cls):
-
         interface_init.initial.result=[]
         cls.interfaceId='interface08'
 
     def setUp(self):
+
         #接口ID，标识唯一接口信息
         self.interfaceId='interface08'
         self.logger=self.initial.logger
         self.s=requests.session()
+
+        # if isinstance(interface_init.initial, Initialization) != True:
+        #     Init()
+        # self.execExcel = ExecExcel()
+
+
+        # s2=requests.Session.request()
         # self.result=[]
 
     @unittest.skip('skip')
@@ -61,29 +67,19 @@ class CaseInterface08(InterFaceCase):
         #写日志，并且根据response值做断言
         self.logger.info('Run case:CaseTest.test_1')
         try:
-            self.assertEqual(str(response.status_code),assert_code)
+            self.assertEqual(str(response.json().get('code')),assert_code)
             interface_init.initial.result.append((case_index,'success','OK'))
         #将错误异常捕获并抛出
         except AssertionError as e:
             interface_init.initial.result.append((case_index,'Fail',str(e)))
             raise e
 
-    @data(get_excel_info()[1], get_excel_info()[2], get_excel_info()[3], get_excel_info()[4],
-          get_excel_info()[5], get_excel_info()[6], get_excel_info()[7], get_excel_info()[8],
-          get_excel_info()[9], get_excel_info()[10], get_excel_info()[11], get_excel_info()[12],
-          get_excel_info()[13], get_excel_info()[14], get_excel_info()[15], get_excel_info()[16],
-          get_excel_info()[17], get_excel_info()[18], get_excel_info()[19], get_excel_info()[20],
-          get_excel_info()[21], get_excel_info()[22], get_excel_info()[23], get_excel_info()[24],
-          get_excel_info()[25], get_excel_info()[26], get_excel_info()[27], get_excel_info()[28],
-          get_excel_info()[29], get_excel_info()[30], get_excel_info()[31], get_excel_info()[32],
-          get_excel_info()[33], get_excel_info()[34], get_excel_info()[35], get_excel_info()[36],
-          get_excel_info()[37], get_excel_info()[38], get_excel_info()[39], get_excel_info()[40],
-          get_excel_info()[41], get_excel_info()[42], get_excel_info()[43], get_excel_info()[44],
-          get_excel_info()[45], get_excel_info()[46], get_excel_info()[47], get_excel_info()[48],
-          get_excel_info()[49], get_excel_info()[50], get_excel_info()[51], get_excel_info()[52],
-          get_excel_info()[53], get_excel_info()[54], get_excel_info()[55], get_excel_info()[56],
-          get_excel_info()[57], get_excel_info()[58], get_excel_info()[59], get_excel_info()[60])
+
+    @data(*ExcelInfo.get_excel_info('interface08'))
     def test_interface08(self,excel_info):
+        if excel_info =='placeholder':
+            self.logger.info("CaseTest.test_interface08|data drivern:skip this placeholder case!")
+            return True
         case_index=excel_info['case_index']
 
         #接口用例为N则不执行直接成功
@@ -105,7 +101,7 @@ class CaseInterface08(InterFaceCase):
         #写日志，并且根据response值做断言
         self.logger.info('Run case:CaseTest.test_interface08|data drivern')
         try:
-            self.assertEqual(str(response.status_code),assert_code)
+            self.assertEqual(str(response.json().get('code')),assert_code)
             interface_init.initial.result.append((case_index,'success','OK'))
         #将错误异常捕获并抛出
         except AssertionError as e:
@@ -120,14 +116,14 @@ class CaseInterface08(InterFaceCase):
 
     @classmethod
     def tearDownClass(cls):
-        execExcel=ExecExcel()
-        execExcel.write_info(cls.interfaceId,interface_init.initial.result)
+        print interface_init.initial.result
+        print cls.interfaceId
+        # execExcel=ExecExcel()
+        # execExcel.write_info(cls.interfaceId,interface_init.initial.result)
+        ExcelInfo.write_excel_info(cls.interfaceId,interface_init.initial.result)
 
-
-
-if __name__=="__main__":
-    if isinstance(interface_init.initial,Initialization)!=True:
+if __name__ == "__main__":
+    if isinstance(interface_init.initial, Initialization) != True:
         Init()
     unittest.main()
-    # print get_excel_info()[0]
-    # print get_excel_info()[1]
+

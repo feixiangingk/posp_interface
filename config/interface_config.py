@@ -3,17 +3,46 @@ __author__ = 'FanGu'
 
 class InterfaceConfig():
 
-    ip='http://172.16.5.128:8081'
+    # ip='http://172.16.5.128:8081'
+
+    ip_call="http://172.16.5.197:8083"
+    ip_recall="http://172.16.5.128:8081"
 
     project_path='D:\\quarkscript\\posp_interface'
+    # excel_path=project_path+"\\testData\\interface_Data.xlsx"
 
     common_headers={"Content-Type":"application/json; charset=UTF-8"}
 
+    headers_applicationCode_1000={"Content-Type":"application/json; charset=UTF-8",
+                    "Token":"355223b29ace450d9e61e235f83d2115"}
+
+    headers_applicationCode_1001 = {"Content-Type": "application/json; charset=UTF-8",
+                    "Token": "e73e02c168b44acdb642f684473babc9"}
+
+    headers_applicationCode_1002 = {"Content-Type": "application/json; charset=UTF-8",
+                    "Token": "184c855d86e349da822ab6e5793a76a9"}
+
+    headers_applicationCode_1003 = {"Content-Type": "application/json; charset=UTF-8",
+                    "Token": "d34757661eb44bc0a17e3b2a052da6d2"}
+
+    headers_applicationCode_1004 = {"Content-Type": "application/json; charset=UTF-8",
+                    "Token": "eb46c6ae9bcd4e2b8c6da60dfc47e32e"}
+
+    headers_applicationCode_1005 = {"Content-Type": "application/json; charset=UTF-8",
+                    "Token": "7220ed68f76341a69fd23115d11c1060"}
+
+    headers_applicationCode_1006 = {"Content-Type": "application/json; charset=UTF-8",
+                    "Token": "27cd663bbc5747bea836abb5178b3515"}
+
     testcase={'load_all':'n',
               'case_discover':['#sdf'],
-              'case_module':['case_interface11']}
+              'case_module':['case_interface08']}
 
     interface_map = {"interface01": "",
+
+                     'interface03':'customer_certification_interface',
+
+                     "interface04":"successful_notice_of_customer_certification",
 
                      "interface06": 'successful_notice_of_single_recharge',
                      "interface06Index": ["tradeNo", "tradeStatus", "finishDateTime", "errorNo", "errorInfo",
@@ -55,14 +84,69 @@ class InterfaceConfig():
         'url':'',
         'interfaceType':'POST',
         "interfaceNo":"",
-        'headers':{},
+        'headers':common_headers,
         'parmas':{},
         'response':{}
     }
 
+
+    #单笔实名认证开户接口
+    customer_certification_interface={
+        'url':ip_call+'/posp/api',
+        'interfaceType':'POST',
+        'interfaceNo':'interface03',
+        'headers': common_headers,
+        'parmas': {
+            # 接口参数列表，第一项为类型、第二项为参数最大长度，第三项为是否必填，第四项为可选列表
+            'interfaceId': ['string', 100, 'Y', []],
+            'merchantCode': ['string', 32, 'Y', ['01', '02']],
+            'buCode': ['string', 4, 'Y', ['C10', 'C11', 'C12']],
+            'applicationCode': ['string', 4, 'Y', ['1000', '1001', '1002', '1003', '1004', '1005', '1006']],
+            'interfaceSync': ['string', 1, 'Y', ['0', '1', '2']],
+            'tradeNo': ['string', 50, 'Y', []],
+            'productCode':[],
+            'tradeDate': ['string', 10, 'Y', ['yyyy-MM-dd']],
+            'tradeTime':[],
+            'name': [],
+            'certType': ['string', 3, 'Y',
+                         ['101', '102', '103', '104', '105', '106', '107', '108', '109', '110', '201', '202', '999']],
+            'certNo': ['string', 50, 'Y', []],
+            'mobile':[],
+            'operAccount':[],
+            'operAccountType':[],
+            'accountType': ['string', 1, 'Y', ['1', '2']],
+            'email':[],
+            'notifyUrl':[],
+            'payChannel':[],
+            'remark': ['string', 600, 'N', []]
+        }
+
+    }
+
+    #单笔（实名认证）开户通知接口
+    successful_notice_of_customer_certification={
+        "url":ip_recall+'/api/deposnotify/createacountnotify',
+        "interfaceType":"POST",
+        "interfaceNo":"interface04",
+        "headers":common_headers,
+        'parmas': {
+            # 接口参数列表，第一项为类型、第二项为参数最大长度，第三项为是否必填，第四项为可选列表
+            'tradeNo': ['string', 50, 'Y', []],
+            'tradeStatus': ['string', 2, 'Y', ['30', '40']],
+            'accountNo':['string',32,'N',[]],
+            'errorNo': ['string', 5, 'N', []],
+            'errorInfo': ['string', 500, 'N', []],
+            'finishDateTime': ['string', 19, 'Y', []],
+            'thirdFinishDateTime': ['string', 19, 'N', []],
+            'payChannel': ['string', 2, 'N', ['00', '01', '02', '03', '04', '05', '06']],
+            'remark': ['string', 600, 'N', []]
+        }
+
+    }
+
     #单笔代扣充值通知接口信息
     successful_notice_of_single_recharge={
-        'url':'/api/deposnotify/rechargenotify',
+        'url':ip_recall+'/api/deposnotify/rechargenotify',
         'interfaceType': 'POST',
         "interfaceNo": "interface06",
         'headers':common_headers,
@@ -89,7 +173,7 @@ class InterfaceConfig():
 
     #单笔代付提现接口信息
     single_cash_payment={
-        'url':'',
+        'url':ip_call+'/posp/api',
         'interfaceType':'POST',
         'interfaceNo':'interface07',
         'headers':common_headers,
@@ -150,7 +234,7 @@ class InterfaceConfig():
 
     #单笔代付提现通知接口信息
     successful_notice_of_single_withdraw_cash={
-        'url': '/api/deposnotify/withdrawnotify',
+        'url': ip_recall+'/api/deposnotify/withdrawnotify',
         'interfaceType': 'POST',
         "interfaceNo": "interface08",
         'headers': common_headers,
@@ -174,7 +258,7 @@ class InterfaceConfig():
 
     # 投资人批量线下认领充值接口信息
     batch_of_investors_recharge_offline={
-        'url':'',
+        'url':ip_call+'/posp/api',
         'interfaceType':'POST',
         'interfaceNo':'interface09',
         'headers': common_headers,
@@ -223,7 +307,7 @@ class InterfaceConfig():
 
     #投资人批量线下认领充值通知接口信息
     notice_of_batch_of_investors_recharge_offline={
-        'url': '/api/deposnotify/investclaimbatchrechargenotify',
+        'url': ip_recall+'/api/deposnotify/investclaimbatchrechargenotify',
         'interfaceType': 'POST',
         "interfaceNo": "interface10",
         'headers': common_headers,
@@ -247,7 +331,7 @@ class InterfaceConfig():
 
     #客户状态信息查询接口信息
     customer_status_info_query={
-        'url':'',
+        'url':ip_call+'/posp/api',
         'interfaceType': 'POST',
         'interfaceNo': 'interface11',
         'headers': common_headers,
@@ -255,11 +339,12 @@ class InterfaceConfig():
             # 接口参数列表，第一项为类型、第二项为参数最大长度，第三项为是否必填，第四项为可选列表
             'interfaceId': ['string', 100, 'Y', []],
             'merchantCode': ['string', 32, 'Y', ['01', '02']],
-            'buCode': ['string', 4, 'Y', ['1000', '1001', '1002', '1003']],
+            'buCode': ['string', 4, 'Y', ['C10', 'C11', 'C12']],
             'applicationCode': ['string', 4, 'Y', ['1000', '1001', '1002', '1003', '1004', '1005', '1006']],
             'interfaceSync': ['string', 1, 'Y', ['0', '1', '2']],
             'tradeNo': ['string', 50, 'Y', []],
             'tradeDate': ['string', 10, 'Y', ['yyyy-MM-dd']],
+            'tradeTime':['string',8,'Y',['hh:mm:ss']],
             'accountNo': ['string', 32, 'Y', []],
             'certType': ['string', 3, 'Y',
                          ['101', '102', '103', '104', '105', '106', '107', '108', '109', '110', '201', '202', '999']],
