@@ -15,10 +15,12 @@ class ExecExcel():
 
     def __init__(self):
 
-        self.initial=interface_init.initial
-        self.file_path=self.initial.project_path+"\\testData\\interface_Data.xlsx"
 
-        self.interface_map = self.initial.interfaceConfig.interface_map
+        # self.initial=interface_init.initial
+        self.file_path="D:\\quarkscript\\posp_interface\\testData\\interface_Data.xlsx"
+        # self.file_path=self.initial.project_path+"\\testData\\interface_Data.xlsx"
+
+        # self.interface_map = self.initial.interfaceConfig.interface_map
 
 
 
@@ -45,7 +47,7 @@ class ExecExcel():
         #用while循环过滤
         while "" in interfaceIndex1:
             interfaceIndex1.remove("")
-        self.interfaceIndex=[str(i) for i in interfaceIndex1]
+        ExecExcel.interfaceIndex=[str(i) for i in interfaceIndex1]
 
 
         #确定表格一共多少行数据
@@ -58,12 +60,12 @@ class ExecExcel():
 
             excel_info[int(rows_info[0])]={}
 
-            for n in xrange(len(self.interfaceIndex)):
-                if self.interfaceIndex[n] in ['tradeAmount', 'currentSucceedAmount', 'succeedAmount','amount','totalAmount','notifyUrl','email']:
-                    excel_info[rows_info[0]][self.interfaceIndex[n]] = str(rows_info[n + 1])
+            for n in xrange(len(ExecExcel.interfaceIndex)):
+                if ExecExcel.interfaceIndex[n] in ['tradeAmount', 'currentSucceedAmount', 'succeedAmount','amount','totalAmount','notifyUrl','email']:
+                    excel_info[rows_info[0]][ExecExcel.interfaceIndex[n]] = str(rows_info[n + 1])
 
                 else:
-                    excel_info[rows_info[0]][self.interfaceIndex[n]]=str(rows_info[n+1]).split('.')[0]
+                    excel_info[rows_info[0]][ExecExcel.interfaceIndex[n]]=str(rows_info[n+1]).split('.')[0]
 
 
 
@@ -83,7 +85,6 @@ class ExecExcel():
         interfaceIndex1=table.row_values(3)
         interfaceIndex1.pop(0)
 
-
         #用while循环过滤
         # while "" in interfaceIndex1:
         #     interfaceIndex1.remove("")
@@ -92,9 +93,7 @@ class ExecExcel():
         for i in xrange(interfaceIndex1.count("")):
             interfaceIndex1.remove("")
 
-
-
-        self.interfaceIndex=[str(i) for i in interfaceIndex1]
+        ExecExcel.interfaceIndex=[str(i) for i in interfaceIndex1]
 
 
         # 确定表格一共多少行数据
@@ -116,24 +115,24 @@ class ExecExcel():
             rows_info = table.row_values(i)
 
             dict_info={'case_index':int(i-3)}
-            for n in xrange(len(self.interfaceIndex)):
+            for n in xrange(len(ExecExcel.interfaceIndex)):
                 if self.interfaceIndex[n] in ['tradeAmount', 'currentSucceedAmount', 'succeedAmount','amount','totalAmount','notifyUrl','email']:
-                    dict_info[self.interfaceIndex[n]] = str(rows_info[n + 1])
+                    dict_info[ExecExcel.interfaceIndex[n]] = str(rows_info[n + 1])
                 else:
-                    dict_info[self.interfaceIndex[n]] = str(rows_info[n + 1]).split('.')[0]
+                    dict_info[ExecExcel.interfaceIndex[n]] = str(rows_info[n + 1]).split('.')[0]
 
                 #第一个if判断值包含@
-                if dict_info[self.interfaceIndex[n]].find('@')!=-1:
+                if dict_info[ExecExcel.interfaceIndex[n]].find('@')!=-1:
                     #第二个if判断定义的值在我们处理范围内
-                    if dict_info[self.interfaceIndex[n]].split('@')[1].strip() in ['int','float','list','json','True','Flase']:
+                    if dict_info[ExecExcel.interfaceIndex[n]].split('@')[1].strip() in ['int','float','list','json','True','Flase']:
                     #用dict.get()方法防止keyerror;用strip()去掉空格
                         try:
-                            dict_info[self.interfaceIndex[n]]=format_data.get(dict_info[self.interfaceIndex[n]].split('@')[1].strip())(dict_info[self.interfaceIndex[n]].split('@')[0])
+                            dict_info[ExecExcel.interfaceIndex[n]]=format_data.get(dict_info[ExecExcel.interfaceIndex[n]].split('@')[1].strip())(dict_info[self.interfaceIndex[n]].split('@')[0])
 
                         #捕获多个异常的写法
                         except (TypeError,ValueError),e:
                             print "i is {one};n is {two}".format(one=(i-3),two=n+2)
-                            interface_init.initial.logger.info("i is {one};n is {two}".format(one=(i-3),two=n+2))
+                            # interface_init.initial.logger.info("i is {one};n is {two}".format(one=(i-3),two=n+2))
                             raise e
 
             excel_info.append(dict_info)
@@ -144,15 +143,16 @@ class ExecExcel():
         EL_data = load_workbook(self.file_path)
 
         sheet_data = EL_data.get_sheet_by_name(sheetName)
+
         for case_index,flag,result in result_list:
             row_info=case_index+4
             # interfaceIndex = self.interface_map[sheetName + "Index"]
 
 
             #写入执行结果
-            sheet_data.cell(coordinate=None,row=row_info,column=len(self.interfaceIndex)+2,value=flag)
+            sheet_data.cell(coordinate=None,row=row_info,column=len(ExecExcel.interfaceIndex)+2,value=flag)
             #写详情
-            sheet_data.cell(coordinate=None,row=row_info,column=len(self.interfaceIndex)+3,value=result)
+            sheet_data.cell(coordinate=None,row=row_info,column=len(ExecExcel.interfaceIndex)+3,value=result)
 
         EL_data.save(self.file_path)
 
@@ -162,8 +162,8 @@ class ExecExcel():
 
 
 if __name__=="__main__":
-    if isinstance(interface_init.initial,Initialization) !=True:
-        Init()
+    # if isinstance(interface_init.initial,Initialization) !=True:
+    #     Init()
     execExcel=ExecExcel()
     list_excel_info=execExcel.get_info_ddt('interface03')
     print list_excel_info[1]

@@ -7,6 +7,7 @@ from config.interface_config import InterfaceConfig
 from common.interface_logging import InterfaceLog
 import interface_init
 
+
 initial=None
 
 class Initialization():
@@ -20,6 +21,7 @@ class Initialization():
         self.html_runner_url =self.project_path+ "\\result\\"
 
         self.testcase = self.interfaceConfig.testcase
+
 
 
         self.logger=interfaceLog.logger

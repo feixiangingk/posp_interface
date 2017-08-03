@@ -32,8 +32,13 @@ class GetRequestInfo():
         if excel_info.has_key("applicationCode"):
             if excel_info.get("applicationCode") in ['100'+x for x in '0123456']:
                 headers=self.token_map.get(excel_info.get("applicationCode"))
-        if excel_info.has_key("tradeNo"):
-            excel_info['tradeNo']=Create_Data.get_tradeNo()
+
+        #多重过滤，把tradeNo不为字符串型的数据过滤，不做处理
+        if excel_info.has_key("tradeNo") and type(excel_info.get("tradeNo",1))==str:
+            if excel_info["tradeNo"].find("@")==-1:
+                excel_info['tradeNo']=Create_Data.get_tradeNo()
+            elif excel_info["tradeNo"].find("@")!=-1:
+                excel_info["tradeNo"]=excel_info["tradeNo"].split("@")[0]
 
         #把入参以外的数据除去，比如断言、response字段，所以interface_config中interface字段必填
         parmas = interface_info['parmas']
@@ -43,3 +48,7 @@ class GetRequestInfo():
         datas = json.dumps(excel_info)
         datas.strip()
         return url,headers,datas
+
+if __name__=="__main__":
+    if type("Dd")==str:
+        print 111

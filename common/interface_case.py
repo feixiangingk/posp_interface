@@ -2,7 +2,7 @@
 __author__ = 'FanGu'
 import unittest
 from common.interface_init import *
-from common.read_excel import ExecExcel
+# from common.read_excel import ExecExcel
 
 class InterFaceCase(unittest.TestCase):
 
@@ -11,7 +11,7 @@ class InterFaceCase(unittest.TestCase):
         if isinstance(interface_init.initial,Initialization)!=True:
             Init()
         self.initial=interface_init.initial
-        self.execExcel=ExecExcel()
+        # self.execExcel=ExecExcel()
         self.test_data=test_data
 
 
