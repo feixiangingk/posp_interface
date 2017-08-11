@@ -1,11 +1,12 @@
 #coding:utf-8
 __author__ = 'FanGu'
 
-import sys,time
+import sys,time,queue,threading
 sys.path.append("..")
 from config.interface_config import InterfaceConfig
 from common.interface_logging import InterfaceLog
 import interface_init
+from script.web_server import WebServer
 
 
 initial=None
@@ -21,10 +22,18 @@ class Initialization():
         self.html_runner_url =self.project_path+ "\\result\\"
 
         self.testcase = self.interfaceConfig.testcase
-
-
-
         self.logger=interfaceLog.logger
+
+
+        web=WebServer()
+
+        self.queue_dict=web.queue_dict
+
+        t=threading.Thread(target=web.run_server)
+        t.setDaemon(True)
+        t.start()
+
+
         self.logger.info("Initialization has complate!")
 
 

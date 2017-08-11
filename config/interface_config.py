@@ -38,11 +38,13 @@ class InterfaceConfig():
               'case_discover':['#sdf'],
               'case_module':['case_interface08']}
 
-    interface_map = {"interface01": "",
+    interface_map = {"interface01": "four_factors_bind_card_interface",
 
                      'interface03':'customer_certification_interface',
 
                      "interface04":"successful_notice_of_customer_certification",
+
+                     "interface05":"single_recharge_interface",
 
                      "interface06": 'successful_notice_of_single_recharge',
                      "interface06Index": ["tradeNo", "tradeStatus", "finishDateTime", "errorNo", "errorInfo",
@@ -80,12 +82,40 @@ class InterfaceConfig():
                                          're-certNo','bankFlag','pwdFlag','re-errorNo','re-errorInfo','exec']
                      }
 
-    bind_card_interface={
-        'url':'',
+    four_factors_bind_card_interface={
+        'url':ip_call+'/posp/api',
         'interfaceType':'POST',
-        "interfaceNo":"",
+        "interfaceNo":"interface01",
         'headers':common_headers,
-        'parmas':{},
+        'parmas': {
+            # 接口参数列表，第一项为类型、第二项为参数最大长度，第三项为是否必填，第四项为可选列表
+            'interfaceId': ['string', 100, 'Y', []],
+            'merchantCode': ['string', 32, 'Y', ['01', '02']],
+            'buCode': ['string', 4, 'Y', ['C10', 'C11', 'C12']],
+            'applicationCode': ['string', 4, 'Y', ['1000', '1001', '1002', '1003', '1004', '1005', '1006']],
+            'interfaceSync': ['string', 1, 'Y', ['0', '1', '2']],
+            'tradeNo': ['string', 50, 'Y', []],
+            'productCode':[],
+            'tradeDate': ['string', 10, 'Y', ['yyyy-MM-dd']],
+            'tradeTime':[],
+            'accountNo':[],
+            'name': [],
+            'certType': ['string', 3, 'Y',
+                         ['101', '102', '103', '104', '105', '106', '107', '108', '109', '110', '201', '202', '999']],
+            'certNo': ['string', 50, 'Y', []],
+            'operAccount':[],
+            'operAccountType':[],
+            'accountType': ['string', 1, 'Y', ['1', '2']],
+            'bankCardNo':[],
+            'bankCardType':[],
+            'reservedPhone':[],
+            'bankCode':[],
+            'bankName':[],
+            'openBranch':[],
+            'payChannel':[],
+            'notifyUrl':[],
+            'remark': ['string', 600, 'N', []]
+        },
         'response':{}
     }
 
@@ -142,6 +172,50 @@ class InterfaceConfig():
             'remark': ['string', 600, 'N', []]
         }
 
+    }
+
+    #单笔代扣充值接口
+    single_recharge_interface={
+        'url': ip_call + '/posp/api',
+        'interfaceType': 'POST',
+        'interfaceNo': 'interface05',
+        'headers': common_headers,
+        'parmas': {
+            # 接口参数列表，第一项为类型、第二项为参数最大长度，第三项为是否必填，第四项为可选列表
+            'interfaceId': ['string', 100, 'Y', []],
+            'merchantCode': ['string', 32, 'Y', ['01', '02']],
+            'buCode': ['string', 4, 'Y', ['C10', 'C11', 'C12']],
+            'applicationCode': ['string', 4, 'Y', ['1000', '1001', '1002', '1003', '1004', '1005', '1006']],
+            'interfaceSync': ['string', 1, 'Y', ['0', '1', '2']],
+            'tradeNo': ['string', 50, 'Y', []],
+            'productCode': [],
+            'tradeDate': ['string', 10, 'Y', ['yyyy-MM-dd']],
+            'tradeTime': [],
+            'businessId':[],
+            'accountNo':[],
+            'accountType': ['string', 1, 'Y', ['1', '2']],
+            'name': [],
+            'certType': ['string', 3, 'Y',
+                         ['101', '102', '103', '104', '105', '106', '107', '108', '109', '110', '201', '202', '999']],
+            'certNo': ['string', 50, 'Y', []],
+            'operAccount': [],
+            'operAccountType': [],
+            'chargeType':[],
+            'bankCardNo':[],
+            'bankCardType':[],
+            'reservedPhone':[],
+            'bankCode':[],
+            'bankName':[],
+            'openBranch':[],
+            'currency':[],
+            'amount':[],
+            'tokenFlg':[],
+            'token':[],
+            'validDay': [],
+            'notifyUrl': [],
+            'payChannel': [],
+            'remark': ['string', 600, 'N', []]
+        }
     }
 
     #单笔代扣充值通知接口信息

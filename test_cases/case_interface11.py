@@ -31,7 +31,7 @@ class CaseInterface11(InterFaceCase):
 
 
 
-    @data(*execExcel.get_info_ddt("interface11"))
+    @data(execExcel.get_info_ddt("interface11")[80])
     def test_interface11(self,excel_info):
         if excel_info =='placeholder':
             self.logger.info("CaseTest.test_interface11|data drivern:skip this placeholder case!")
@@ -57,14 +57,14 @@ class CaseInterface11(InterFaceCase):
         response=self.s.post(url=url,data=datas,headers=headers)
 
         #写日志，并且根据response值做断言
-        self.logger.info('Run case:CaseTest.test_interface11|data drivern')
+        self.logger.info('Run case:CaseTest.test_interface11|data drivern datas:{one}'.format(one=datas))
         try:
             #如果返回状态码不是200，则把msg写进日志里
             if str(response.json().get("code"))!="200":
                 self.logger.info("Run case:CaseTest.test_interface11|error:{one}".format(one=response.text))
 
             if str(response.json().get('code')) == "200":
-                self.assertEqual(eval(response.json().get('data')).get('tradeStatus'), assert_tradeStatus)
+                self.assertEqual(str(eval(response.json().get('data')).get('tradeStatus')), assert_tradeStatus)
 
             # 根据code进行断言，如果断言成功，则在结果集result添加元组，标致为success
             self.assertEqual(str(response.json().get('code')), assert_code)
