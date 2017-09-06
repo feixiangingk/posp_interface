@@ -1,7 +1,7 @@
 #coding:utf-8
 __author__ = 'FanGu'
 
-import sys,time,queue,threading
+import sys,time,threading
 sys.path.append("..")
 from config.interface_config import InterfaceConfig
 from common.interface_logging import InterfaceLog
@@ -34,7 +34,7 @@ class Initialization():
         t.start()
 
 
-        self.logger.info("Initialization has complate!")
+        self.logger.info("Initialization has complated!")
 
 
 

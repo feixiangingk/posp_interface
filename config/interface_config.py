@@ -3,9 +3,12 @@ __author__ = 'FanGu'
 
 class InterfaceConfig():
 
-    # ip='http://172.16.5.128:8081'
 
-    ip_call="http://172.16.5.197:8083"
+    #UAT05环境
+    # ip_call="http://172.16.5.197:8083"
+
+    #WH02环境
+    ip_call="http://172.29.150.159:8083"
     ip_recall="http://172.16.5.128:8081"
 
     project_path='D:\\quarkscript\\posp_interface'
@@ -47,9 +50,7 @@ class InterfaceConfig():
                      "interface05":"single_recharge_interface",
 
                      "interface06": 'successful_notice_of_single_recharge',
-                     "interface06Index": ["tradeNo", "tradeStatus", "finishDateTime", "errorNo", "errorInfo",
-                                          "tradeAmount", "currentSucceedAmount", "succeedAmount", "thirdFinishDateTime",
-                                          "payChannel", "remark", "code", "msg",'exec'],
+
 
                      "interface07":"single_cash_payment",
                      "interface07Index":['interfaceId','merchantCode','buCode','applicationCode','interfaceSync','tradeNo',
@@ -79,9 +80,40 @@ class InterfaceConfig():
                      "interface11Index": ['interfaceId','merchantCode','buCode','applicationCode','interfaceSync','tradeNo',
                                          'tradeDate','tradeTime','accountNo','certType','certNo','accountType','remark',
                                          're-code','re-tradeNo','re-tradeStatus','re-data','re-msg','accountFlag','re-accountNo',
-                                         're-certNo','bankFlag','pwdFlag','re-errorNo','re-errorInfo','exec']
+                                         're-certNo','bankFlag','pwdFlag','re-errorNo','re-errorInfo','exec'],
+
+                     "interface12":'update_customer_info_interface'
+
                      }
 
+    #客户信息变更接口
+    update_customer_info_interface={
+        'url':ip_call+'/posp/api',
+        'interfaceType':'POST',
+        'interfaceNo':'interface12',
+        'headers':common_headers,
+        'parmas':{
+            # 接口参数列表，第一项为类型、第二项为参数最大长度，第三项为是否必填，第四项为可选列表
+            'interfaceId': ['string', 100, 'Y', []],
+            'merchantCode': ['string', 32, 'Y', ['01', '02']],
+            'buCode': ['string', 4, 'Y', ['C10', 'C11', 'C12']],
+            'applicationCode': ['string', 4, 'Y', ['1000', '1001', '1002', '1003', '1004', '1005', '1006']],
+            'interfaceSync': ['string', 1, 'Y', ['0', '1', '2']],
+            'tradeNo': ['string', 50, 'Y', []],
+            'tradeDate': ['string', 10, 'Y', ['yyyy-MM-dd']],
+            'tradeTime': ['string',8,'Y',['hh:mm:ss']],
+            'accountNo': ['string',32,'Y',[]],
+            'certType': ['string', 3, 'Y',
+                         ['101', '102', '103', '104', '105', '106', '107', '108', '109', '110', '201', '202', '999']],
+            'certNo': ['string', 50, 'Y', []],
+            'accountType': ['string', 1, 'Y', ['1', '2']],
+            'accountName':['string',200,'N',[]],
+            'email':['string',30,'N',[]],
+            'mobile':['string',20,'N',[]]
+        }
+    }
+
+    #四要素绑卡接口
     four_factors_bind_card_interface={
         'url':ip_call+'/posp/api',
         'interfaceType':'POST',
@@ -95,25 +127,25 @@ class InterfaceConfig():
             'applicationCode': ['string', 4, 'Y', ['1000', '1001', '1002', '1003', '1004', '1005', '1006']],
             'interfaceSync': ['string', 1, 'Y', ['0', '1', '2']],
             'tradeNo': ['string', 50, 'Y', []],
-            'productCode':[],
+            'productCode':['string', 10, 'Y', []],
             'tradeDate': ['string', 10, 'Y', ['yyyy-MM-dd']],
-            'tradeTime':[],
-            'accountNo':[],
-            'name': [],
+            'tradeTime':['string', 8, 'Y', ['hh:mm:ss']],
+            'accountNo':['string',32,'N',[]],
+            'name': ['string', 50, 'Y', []],
             'certType': ['string', 3, 'Y',
                          ['101', '102', '103', '104', '105', '106', '107', '108', '109', '110', '201', '202', '999']],
             'certNo': ['string', 50, 'Y', []],
-            'operAccount':[],
-            'operAccountType':[],
+            'operAccount':['string', 1000, 'Y', []],
+            'operAccountType':['string', 200, 'Y', []],
             'accountType': ['string', 1, 'Y', ['1', '2']],
-            'bankCardNo':[],
-            'bankCardType':[],
-            'reservedPhone':[],
-            'bankCode':[],
-            'bankName':[],
-            'openBranch':[],
-            'payChannel':[],
-            'notifyUrl':[],
+            'bankCardNo': ['string', 32, 'Y', []],
+            'bankCardType': ['string', 1, 'Y', ['1', '2']],
+            'reservedPhone': ['string', 20, 'Y', []],
+            'bankCode': ['string', 10, 'Y', []],
+            'bankName': ['string', 100, 'Y', []],
+            'openBranch': ['string', 255, 'N', []],
+            'payChannel':['string', 16, 'N', []],
+            'notifyUrl':['string', 100, 'N', []],
             'remark': ['string', 600, 'N', []]
         },
         'response':{}
@@ -134,20 +166,20 @@ class InterfaceConfig():
             'applicationCode': ['string', 4, 'Y', ['1000', '1001', '1002', '1003', '1004', '1005', '1006']],
             'interfaceSync': ['string', 1, 'Y', ['0', '1', '2']],
             'tradeNo': ['string', 50, 'Y', []],
-            'productCode':[],
+            'productCode':['string', 10, 'Y', []],
             'tradeDate': ['string', 10, 'Y', ['yyyy-MM-dd']],
-            'tradeTime':[],
-            'name': [],
+            'tradeTime':['string', 8, 'Y', ['hh:mm:ss']],
+            'name': ['string', 50, 'Y', []],
             'certType': ['string', 3, 'Y',
                          ['101', '102', '103', '104', '105', '106', '107', '108', '109', '110', '201', '202', '999']],
             'certNo': ['string', 50, 'Y', []],
-            'mobile':[],
-            'operAccount':[],
-            'operAccountType':[],
+            'mobile':['string', 20, 'Y', []],
+            'operAccount':['string', 1000, 'Y', []],
+            'operAccountType':['string', 200, 'Y', []],
             'accountType': ['string', 1, 'Y', ['1', '2']],
-            'email':[],
-            'notifyUrl':[],
-            'payChannel':[],
+            'email':['string', 50, 'N', []],
+            'notifyUrl':['string', 100, 'N', []],
+            'payChannel':['string', 16, 'N', []],
             'remark': ['string', 600, 'N', []]
         }
 
@@ -188,11 +220,12 @@ class InterfaceConfig():
             'applicationCode': ['string', 4, 'Y', ['1000', '1001', '1002', '1003', '1004', '1005', '1006']],
             'interfaceSync': ['string', 1, 'Y', ['0', '1', '2']],
             'tradeNo': ['string', 50, 'Y', []],
-            'productCode': [],
+            'productCode':['string', 10, 'Y', []],
             'tradeDate': ['string', 10, 'Y', ['yyyy-MM-dd']],
-            'tradeTime': [],
-            'businessId':[],
+            'tradeTime':['string', 8, 'Y', ['hh:mm:ss']],
+            'businessId':['string',],
             'accountNo':[],
+            'sectionFlg':[],
             'accountType': ['string', 1, 'Y', ['1', '2']],
             'name': [],
             'certType': ['string', 3, 'Y',

@@ -53,7 +53,11 @@ class GetRequestInfo():
         #多重过滤，把tradeNo不为字符串型的数据过滤，不做处理
         if excel_info.has_key("tradeNo") and type(excel_info.get("tradeNo",1))==str:
             if excel_info["tradeNo"].find("@")==-1:
-                excel_info['tradeNo']=Create_Data.get_tradeNo()
+                excel_info['tradeNo']=Create_Data.get_tradeNo(interfaceId)
+                if excel_info.has_key("buCode") and excel_info.get("buCode","false")!="C11":
+                    excel_info['tradeNo']=excel_info['tradeNo'].replace("C11",str(excel_info['buCode']))
+                if excel_info.has_key("applicationCode") and excel_info.get("applicationCode","false")!="1003":
+                    excel_info['tradeNo']=excel_info['tradeNo'].replace("1003",str(excel_info['applicationCode']))
             elif excel_info["tradeNo"].find("@")!=-1:
                 excel_info["tradeNo"]=excel_info["tradeNo"].split("@")[0]
 

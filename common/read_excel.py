@@ -1,5 +1,5 @@
 #coding:utf-8
-import xlrd,sys
+import xlrd,sys,copy,random
 from win32com.client import Dispatch
 import win32com.client
 sys.path.append('..')
@@ -9,15 +9,21 @@ sys.setdefaultencoding('utf-8')
 from openpyxl import  load_workbook
 from datetime import datetime
 from interface_init import *
+from config.interface_config import InterfaceConfig
 
 class ExecExcel():
     interfaceIndex=None
+    interface03_base_case = [1,'QF-POSP-DEPO-CREATE-ACC-0012','10','C11','1003','2','01100300322017071715540002', 'PYZ01',
+                             '2017-07-17', '15:54:31', '这大大', '101', '440704196001081942347', '13999705062', 'C-A10->C-B10->ALL->ALL->ALL',
+                             '10', '1', 'kduijku@163.com', 'www.baidu.com', '00', '测试', '200', None,
+                             '{"tradeNo":"test001","tradeStatus":"30","accountNo":"123456789123456789"}@json', 'y', 'Fail']
+
 
     def __init__(self):
 
 
         # self.initial=interface_init.initial
-        self.file_path="D:\\quarkscript\\posp_interface\\testData\\interface_Data.xlsx"
+        self.file_path="D:\\quarkscript\\posp_interface\\testData\\interface_Data_wh02.xlsx"
         # self.file_path=self.initial.project_path+"\\testData\\interface_Data.xlsx"
 
         # self.interface_map = self.initial.interfaceConfig.interface_map
@@ -148,7 +154,6 @@ class ExecExcel():
             row_info=case_index+4
             # interfaceIndex = self.interface_map[sheetName + "Index"]
 
-
             #写入执行结果
             sheet_data.cell(coordinate=None,row=row_info,column=len(ExecExcel.interfaceIndex)+2,value=flag)
             #写详情
@@ -156,8 +161,113 @@ class ExecExcel():
 
         EL_data.save(self.file_path)
 
+    def create_UseCase(self,sheetName,title_row=4):
+        #从配置文件中读取接口信息
+        interfaceConfig=InterfaceConfig()
+        interface_Name=interfaceConfig.interface_map[sheetName]
+        interface_info=getattr(interfaceConfig,interface_Name)
+        parmas=interface_info['parmas']
+        parmas_dict={}
+        for i in  parmas.keys():
+            parmas_dict[i]={"type":parmas[i][0],"parmas_len":parmas[i][1],"required_sign":parmas[i][2]}
+        # print parmas_dict
 
 
+        #load需要的sheet数据
+        EL_data = load_workbook(self.file_path)
+        sheet_data = EL_data.get_sheet_by_name(sheetName)
+        # print dir(sheet_data)
+        # # print sheet_data.columns()
+        # print sheet_data.max_column
+        # print sheet_data.max_row
+        # print type(sheet_data)
+        # print sheet_data['B5'].value
+        # print sheet_data.cell(row=5,column=2).value
+        # sheet_list=[]
+        # for row in sheet_data.iter_rows(min_col=1,max_row=4,max_col=28,min_row=4):
+        #     for cell in row:
+        #         sheet_list.append(cell.value)
+        # print sheet_list
+
+        # sheet_data['B12'].value='sdfk33333'
+        # EL_data.save(self.file_path)
+        # sheet_data.cell(row=12,column=2,coordinate=None,value='中文试试看')
+
+        # sheet_data.append([1,2,3,4,5,3])
+        # sheet_data.append(['sdfsdf',33333,'测试'])
+        # EL_data.save(self.file_path)
+
+
+        '''获取一个字典的映射，key为excel表格表头，value为基础用例的值'''
+        title_list = [i.value for i in sheet_data[title_row]]
+        base_case = [i.value for i in sheet_data[title_row + 1]]
+        data_map = dict(zip(title_list, base_case))
+        print parmas_dict
+
+        '''必填元素非空验证'''
+        for i in parmas_dict.keys():
+            required_sign=parmas_dict[i].get("required_sign")
+            if required_sign=="Y":
+                parmas_index=title_list.index(i)
+                new_case=copy.deepcopy(base_case)
+                new_case[parmas_index] = ""
+                #用例说明设置
+                new_case[-1]="非空验证，参数{one}为空，预期失败".format(one=i)
+                #预期结果设置
+                tradeStatus_index=title_list.index("re-tradeStatus")
+                new_case[tradeStatus_index]=40
+
+                """设置预期返回状态码为601"""
+                code_index=title_list.index("re-code")
+                new_case[code_index]="601"
+
+                sheet_data.append(new_case)
+
+        '''参数最大长度验证'''
+        for i in parmas_dict.keys():
+            parmas_len=parmas_dict[i].get("parmas_len")
+            parmas_index=title_list.index(i)
+            new_case=copy.deepcopy(base_case)
+            new_case[parmas_index]="".join([random.choice("abcdefghijklmnopqrstyvw012345678") for k in xrange(parmas_len+1)])
+            # 用例说明设置
+            new_case[-1] = "参数长度验证，{one}最大长度为{two}，构造{three}传参；预期失败".format(one=i,two=parmas_len,three=new_case[parmas_index])
+            # 预期结果设置
+            tradeStatus_index = title_list.index("re-tradeStatus")
+            new_case[tradeStatus_index] = 40
+
+            """设置预期返回状态码为601"""
+            code_index = title_list.index("re-code")
+            new_case[code_index] = "601"
+            sheet_data.append(new_case)
+
+        '''参数数据类型验证'''
+        for i in parmas_dict.keys():
+            parmas_type=parmas_dict[i].get("type")
+            parmas_index=title_list.index(i)
+            new_case=copy.deepcopy(base_case)
+            if parmas_type=="string":
+                tradeStatus_index = title_list.index("re-tradeStatus")
+                new_case[tradeStatus_index] = 40
+
+                """设置预期返回状态码为601"""
+                code_index = title_list.index("re-code")
+                new_case[code_index] = "601"
+
+                '''新增int类型校验用例'''
+                new_case[parmas_index]="1@int"
+                new_case[-1]="参数类型校验，{one}应为string型，实际取值int型1，预期失败".format(one=i)
+                sheet_data.append(new_case)
+
+                '''新增float类型效验用例'''
+                new_case[parmas_index]="2@float"
+                new_case[-1]="参数类型校验，{one}应为string型，实际取值float型2.0，预期失败".format(one=i)
+                sheet_data.append(new_case)
+
+                '''新增list类型校验用例'''
+                new_case[parmas_index]="3@list"
+                new_case[-1]="参数类型校验，{one}应为string型，实际取值list型[3]，预期失败".format(one=i)
+                sheet_data.append(new_case)
+        EL_data.save(self.file_path)
 
 
 
@@ -165,6 +275,7 @@ if __name__=="__main__":
     # if isinstance(interface_init.initial,Initialization) !=True:
     #     Init()
     execExcel=ExecExcel()
-    list_excel_info=execExcel.get_info_ddt('interface03')
-    print list_excel_info[1]
+    list_excel_info=execExcel.get_info_ddt('interface12')
+    # print list_excel_info[10]
 
+    execExcel.create_UseCase('interface12')
